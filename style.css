@@ -1,0 +1,197 @@
+body {
+  font-family: 'Prompt', sans-serif;
+  background: #000;
+  color: #fff;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  text-align: center;
+}
+
+/* เวลาใหญ่พิเศษ */
+.timer-container {
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+.timer {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 120px;
+  color: #00ffcc;
+}
+
+/* กล่องสี่เหลี่ยมยาว */
+.scoreboard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  /* เดิม 95% → ขยายกว้างเกือบเต็ม */
+  max-width: 1600px;
+  /* เดิม 1200px → รองรับจอใหญ่ขึ้น */
+  padding: 40px 30px;
+  /* เพิ่มความหนาด้านใน */
+  background: #111;
+  border-radius: 25px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+  margin-bottom: 30px;
+}
+
+.team {
+  width: 32%;
+  padding: 30px;
+  font-size: 28px;
+}
+
+.team.a {
+  background-color: #e53935;
+}
+
+.team.b {
+  background-color: #1e88e5;
+}
+
+.score {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 100px;
+  margin-top: 10px;
+}
+
+.team-name {
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: #fff;
+}
+
+.center-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 30%;
+}
+
+.status {
+  font-size: 30px;
+  margin-bottom: 10px;
+  color: #ffd700;
+}
+
+#halfLabel {
+  font-size: 27px;
+  color: #ccc;
+}
+
+/* ปุ่มควบคุม */
+.controls-sticky {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #111;
+  padding: 15px 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.score-controls,
+.half-buttons,
+.mode-toggle,
+.countdown-setup {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.score-controls>div {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.score-controls>div:first-child,
+.score-controls>div:last-child {
+  flex-direction: column;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 20px;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.1s, background 0.3s;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+.start {
+  background: #43a047;
+  color: white;
+}
+
+.pause {
+  background: #ffa000;
+  color: white;
+}
+
+.reset {
+  background: #e53935;
+  color: white;
+}
+
+.half {
+  background: #fbc02d;
+  color: #000;
+}
+
+.score-controls button {
+  background: #e53935;
+  color: white;
+}
+
+.score-controls .plus {
+  background: #1e88e5;
+}
+
+input[type="text"] {
+  padding: 8px;
+  font-size: 18px;
+  width: 100px;
+  text-align: center;
+}
+
+.toggle-mode {
+  background-color: #444;
+  color: white;
+}
+
+.logo-container {
+  margin-top: 20px;
+}
+
+.logo {
+  height: 80px;
+  object-fit: contain;
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 999;
+}
