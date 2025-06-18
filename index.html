@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EasyKids Robotics Scoreboard Timer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Prompt:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .controls-bar {
+      margin-top: auto;
+      margin-bottom: 20px; /* เพิ่มระยะห่างจากขอบล่าง */
+    }
+  </style>
+</head>
+
+<body>
+  <div class="logo-container">
+    <img src="EASYKIDS LOGO WHITE.PNG" alt="EasyKids Logo" class="logo" />
+  </div>
+
+  <div class="timer-container">
+    <div class="timer" id="timer">00:00:00</div>
+  </div>
+
+  <div class="scoreboard card">
+    <div class="team a">
+      <input id="teamAName" class="team-name" value="ทีม A" onchange="updateTeamName('A')" />
+      <div id="scoreA" class="score">0</div>
+    </div>
+    <div class="center-display">
+      <div id="status" class="status">⏸ หยุดอยู่</div>
+      <div id="halfLabel">ครึ่งแรก / First Half</div>
+    </div>
+    <div class="team b">
+      <input id="teamBName" class="team-name" value="ทีม B" onchange="updateTeamName('B')" />
+      <div id="scoreB" class="score">0</div>
+    </div>
+  </div>
+
+  <!-- ปุ่มทั้งหมดเรียงแนวนอนในบาร์เดียว - ล่างสุด -->
+  <div class="controls-bar card">
+    <button onclick="changeScore('A', 1)">+</button>
+    <button onclick="changeScore('A', -1)">-</button>
+
+    <button class="start" onclick="startTimer()">▶ START</button>
+    <button class="pause" onclick="pauseTimer()">⏸ PAUSE</button>
+    <button class="reset" onclick="resetTimer()">⏹ RESET</button>
+
+    <button class="plus" onclick="changeScore('B', 1)">+</button>
+    <button onclick="changeScore('B', -1)">-</button>
+
+    <button class="half" onclick="setHalf('ครึ่งแรก / First Half')">ครึ่งแรก</button>
+    <button class="half" onclick="setHalf('ครึ่งหลัง / Second Half')">ครึ่งหลัง</button>
+
+    <button id="modeButton" class="toggle-mode" onclick="toggleMode()">โหมด: นับขึ้น</button>
+
+    <span class="countdown-setup" id="countdownSection" style="display: none;">
+      <input type="text" id="countdownInput" placeholder="MM:SS" />
+      <button onclick="setCountdown()">ตั้งเวลา</button>
+    </span>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
