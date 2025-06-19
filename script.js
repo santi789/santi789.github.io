@@ -4,9 +4,21 @@ let startTime;
 let totalElapsed = 0;
 let running = false;
 
-let mode = 'up'; // 'up' or 'down'
+let mode = 'up';
 let countdownTarget = 0;
 let remainingCountdown = 0;
+let lastSecondPlayed = null;
+let hasPlayedBuzzer = false;
+
+const beepAudio = new Audio('Timer.mp3');
+const buzzerAudio = new Audio('START 3 .mp3');
+beepAudio.preload = 'auto';
+buzzerAudio.preload = 'auto';
+
+function stopAudio(audio) {
+  audio.pause();
+  audio.currentTime = 0;
+}
 
 function updateScores() {
   document.getElementById('scoreA').innerText = scoreA;
@@ -29,31 +41,52 @@ function updateTimer() {
     const tenths = String(Math.floor((elapsed % 1000) / 10)).padStart(2, '0');
     document.getElementById('timer').innerText = `${minutes}:${seconds}:${tenths}`;
   } else {
-    let remaining = countdownTarget - elapsed;
-    if (remaining <= 0) {
+    remainingCountdown = countdownTarget - elapsed;
+
+    if (remainingCountdown <= 0) {
+      remainingCountdown = 0; // กันไม่ให้ติดลบ
+      if (!hasPlayedBuzzer) {
+        stopAudio(beepAudio);
+        stopAudio(buzzerAudio);
+        buzzerAudio.play();
+        hasPlayedBuzzer = true;
+      }
       clearInterval(timerInterval);
-      document.getElementById('timer').innerText = "00:00:00";
-      document.getElementById('status').innerText = "⏰ หมดเวลา";
       running = false;
+      document.getElementById('timer').innerText = "00:00:00";
+      document.getElementById('status').innerText = "⏰ หมดเวลา!";
+      document.getElementById('toggleStartPause').innerText = "▶ START";
       return;
     }
-    remainingCountdown = remaining;
-    const minutes = String(Math.floor(remaining / 60000)).padStart(2, '0');
-    const seconds = String(Math.floor((remaining % 60000) / 1000)).padStart(2, '0');
-    const tenths = String(Math.floor((remaining % 1000) / 10)).padStart(2, '0');
+
+    const currentSecond = Math.floor(remainingCountdown / 1000);
+
+    if (currentSecond !== lastSecondPlayed && currentSecond <= 10 && currentSecond > 0) {
+      stopAudio(beepAudio);
+      beepAudio.play();
+      lastSecondPlayed = currentSecond;
+    }
+
+    const minutes = String(Math.floor(remainingCountdown / 60000)).padStart(2, '0');
+    const seconds = String(Math.floor((remainingCountdown % 60000) / 1000)).padStart(2, '0');
+    const tenths = String(Math.floor((remainingCountdown % 1000) / 10)).padStart(2, '0');
     document.getElementById('timer').innerText = `${minutes}:${seconds}:${tenths}`;
   }
+}
+
+function toggleStartPause() {
+  if (!running) startTimer();
+  else pauseTimer();
 }
 
 function startTimer() {
   if (!running) {
     running = true;
+    stopAudio(buzzerAudio);
+    buzzerAudio.play();
     document.getElementById('status').innerText = "⏱ กำลังเล่น";
-    if (mode === 'up') {
-      startTime = new Date().getTime() - totalElapsed;
-    } else {
-      startTime = new Date().getTime() - (countdownTarget - remainingCountdown);
-    }
+    document.getElementById('toggleStartPause').innerText = "⏸ PAUSE";
+    startTime = new Date().getTime() - (mode === 'up' ? totalElapsed : countdownTarget - remainingCountdown);
     timerInterval = setInterval(updateTimer, 10);
   }
 }
@@ -61,14 +94,14 @@ function startTimer() {
 function pauseTimer() {
   if (running) {
     running = false;
-    document.getElementById('status').innerText = "⏸ หยุดอยู่";
     clearInterval(timerInterval);
+    stopAudio(beepAudio);
+    stopAudio(buzzerAudio);
     const now = new Date().getTime();
-    if (mode === 'up') {
-      totalElapsed = now - startTime;
-    } else {
-      remainingCountdown = countdownTarget - (now - startTime);
-    }
+    if (mode === 'up') totalElapsed = now - startTime;
+    else remainingCountdown = countdownTarget - (now - startTime);
+    document.getElementById('status').innerText = "⏸ หยุดอยู่";
+    document.getElementById('toggleStartPause').innerText = "▶ START";
   }
 }
 
@@ -76,14 +109,24 @@ function resetTimer() {
   pauseTimer();
   totalElapsed = 0;
   remainingCountdown = countdownTarget;
+  lastSecondPlayed = null;
+  hasPlayedBuzzer = false;
+  stopAudio(beepAudio);
+  stopAudio(buzzerAudio);
   document.getElementById('timer').innerText = "00:00:00";
+  document.getElementById('status').innerText = "ระบบจับเวลา";
 }
 
 function toggleMode() {
-  mode = (mode === 'up') ? 'down' : 'up';
-  document.getElementById('modeButton').innerText = `โหมด: ${mode === 'up' ? 'นับขึ้น' : 'ถอยหลัง'}`;
-  document.getElementById('countdownSection').style.display = mode === 'down' ? 'flex' : 'none';
-  resetTimer();
+  if (!running) {
+    mode = (mode === 'up') ? 'down' : 'up';
+    document.getElementById('modeButton').innerText = `โหมด: ${mode === 'up' ? 'นับขึ้น' : 'ถอยหลัง'}`;
+    document.getElementById('countdownSection').style.display = mode === 'down' ? 'flex' : 'none';
+    resetTimer();
+    if (mode === 'down') {
+      setTimeout(() => document.getElementById('countdownInput').focus(), 100);
+    }
+  }
 }
 
 function setCountdown() {
@@ -94,6 +137,8 @@ function setCountdown() {
   countdownTarget = (minutes * 60 + seconds) * 1000;
   remainingCountdown = countdownTarget;
   document.getElementById('timer').innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}:00`;
+  lastSecondPlayed = null;
+  hasPlayedBuzzer = false;
 }
 
 function setHalf(half) {
@@ -105,5 +150,42 @@ function updateTeamName(team) {
   const newName = document.getElementById(inputId).value;
   console.log(`Team ${team} renamed to: ${newName}`);
 }
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(err => {
+      alert(`ไม่สามารถเปิดโหมดเต็มจอได้: ${err.message}`);
+    });
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+document.addEventListener('keydown', (e) => {
+  const activeElement = document.activeElement;
+  if (activeElement.tagName === 'INPUT') {
+    // ✅ ถ้ากด Enter ตอนอยู่ใน input ให้กดตั้งเวลาได้เลย
+    if (e.key === 'Enter' && activeElement.id === 'countdownInput') {
+      setCountdown();
+    }
+    return; // ไม่ทำอย่างอื่น
+  }
+
+  const key = e.key;
+  switch (key) {
+    case '0': toggleStartPause(); break;
+    case '1': changeScore('A', 1); break;
+    case '2': changeScore('A', -1); break;
+    case '6': changeScore('B', 1); break;
+    case '7': changeScore('B', -1); break;
+    case '8':
+      const current = document.getElementById('halfLabel').innerText;
+      document.getElementById('halfLabel').innerText = current.includes('แรก') ? 'ครึ่งหลัง / Second Half' : 'ครึ่งแรก / First Half';
+      break;
+    case '3': toggleMode(); break;
+    case 'Enter': resetTimer(); break;
+    case '9': toggleFullscreen(); break;
+  }
+});
 
 updateScores();
