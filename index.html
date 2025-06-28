@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Prompt:wght@500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <div class="logo-container">
     <img src="EASYKIDS LOGO WHITE.PNG" alt="EasyKids Logo" class="logo" />
@@ -32,7 +34,7 @@
   </div>
 
   <div class="controls-bar card">
-    <button onclick="changeScore('A', 1)">+</button>
+    <button class="plus red" onclick="changeScore('A', 1)">+</button>
     <button onclick="changeScore('A', -1)">-</button>
 
     <button id="toggleStartPause" class="start" onclick="toggleStartPause()">▶ START</button>
@@ -42,16 +44,23 @@
     <button onclick="changeScore('B', -1)">-</button>
 
     <button class="half" onclick="setHalf('ครึ่งแรก / First Half')">ครึ่งแรก</button>
+    <button class="half" onclick="startBreak()">พักเบรก</button>
     <button class="half" onclick="setHalf('ครึ่งหลัง / Second Half')">ครึ่งหลัง</button>
 
     <button id="modeButton" class="toggle-mode" onclick="toggleMode()">โหมด: นับขึ้น</button>
 
     <span class="countdown-setup" id="countdownSection" style="display: none;">
-      <input type="text" id="countdownInput" placeholder="MM:SS" autofocus />
+      <input type="text" id="countdownInput" placeholder="นาที" maxlength="2" oninput="formatTimeInput(this)"
+        pattern="[0-9]{2}:[0-9]{2}" autofocus />
       <button onclick="setCountdown()">ตั้งเวลา</button>
     </span>
   </div>
 
+  <!-- preload เสียง -->
+  <audio id="startAudio" src="START 3 .mp3" preload="auto"></audio>
+  <audio id="beepAudio" src="Timer.mp3" preload="auto"></audio>
+
   <script src="script.js"></script>
 </body>
+
 </html>
