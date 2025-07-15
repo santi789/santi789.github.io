@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,7 +7,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Prompt:wght@500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
   <div class="logo-container">
     <img src="EASYKIDS LOGO WHITE.PNG" alt="EasyKids Logo" class="logo" />
@@ -48,19 +46,29 @@
     <button class="half" onclick="setHalf('ครึ่งหลัง / Second Half')">ครึ่งหลัง</button>
 
     <button id="modeButton" class="toggle-mode" onclick="toggleMode()">โหมด: นับขึ้น</button>
+    <button id="saveStatsBtn" onclick="saveMatchStatsManual()">บันทึกคะแนน</button>
 
     <span class="countdown-setup" id="countdownSection" style="display: none;">
-      <input type="text" id="countdownInput" placeholder="นาที" maxlength="2" oninput="formatTimeInput(this)"
-        pattern="[0-9]{2}:[0-9]{2}" autofocus />
+      <input type="text" id="countdownInput" placeholder="นาที" maxlength="2" oninput="formatTimeInput(this)" pattern="[0-9]{2}:[0-9]{2}" autofocus />
       <button onclick="setCountdown()">ตั้งเวลา</button>
     </span>
   </div>
 
-  <!-- preload เสียง -->
+  <div id="statsPopup" class="popup hidden">
+    <div class="stats-header">
+      📋 คะแนนที่บันทึกไว้
+      <button onclick="clearSavedStats()">🗑️</button>
+      <button onclick="toggleStatsPopup()">✖</button>
+    </div>
+    <div id="statsContent">
+      <div id="savedStatsList"></div>
+    </div>
+  </div>
+  <button id="openStatsPopup" class="popup-toggle" onclick="toggleStatsPopup()">📊</button>
+
   <audio id="startAudio" src="START 3 .mp3" preload="auto"></audio>
   <audio id="beepAudio" src="Timer.mp3" preload="auto"></audio>
 
   <script src="script.js"></script>
 </body>
-
 </html>
