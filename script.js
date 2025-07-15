@@ -31,6 +31,52 @@ function updateScores() {
 function changeScore(team, change) {
   if (team === 'A') scoreA = Math.max(0, scoreA + change);
   else scoreB = Math.max(0, scoreB + change);
+
+
+  // 🟡 บันทึกคะแนน
+  let savedMatches = [];
+
+  function saveMatchStatsManual() {
+    const date = new Date();
+    const day = date.toLocaleDateString('th-TH');
+    const time = date.toLocaleTimeString('th-TH');
+
+    const teamA = document.getElementById('teamAName').value || 'ทีม A';
+    const teamB = document.getElementById('teamBName').value || 'ทีม B';
+    const modeText = mode === 'up' ? 'นับขึ้น' : 'ถอยหลัง';
+    const duration = mode === 'up' ? Math.floor(totalElapsed / 1000) : Math.floor((countdownTarget - remainingCountdown) / 1000);
+
+    const data = { day, time, teamA, scoreA, teamB, scoreB, modeText, duration };
+    savedMatches.push(data);
+    renderSavedMatches();
+    showSavedPopup();
+  }
+
+  function renderSavedMatches() {
+    const container = document.getElementById('savedStatsList');
+    container.innerHTML = '';
+    savedMatches.forEach((match, index) => {
+      const div = document.createElement('div');
+      div.className = 'saved-item';
+      div.innerHTML = `
+      <strong>${match.teamA}</strong> ${match.scoreA} - ${match.scoreB} <strong>${match.teamB}</strong>
+      <br><small>${match.day} ${match.time} (${match.modeText})</small>
+    `;
+      container.appendChild(div);
+    });
+  }
+
+  function showSavedPopup() {
+    const popup = document.getElementById('savedPopup');
+    popup.classList.add('visible');
+    setTimeout(() => popup.classList.remove('visible'), 3000);
+  }
+
+  function toggleSlidePanel() {
+    document.getElementById('savedSlidePanel').classList.toggle('open');
+  }
+
+
   updateScores();
 }
 
@@ -236,7 +282,7 @@ function setCountdown() {
   hasPlayedBuzzer = false;
 
   const mm = String(minutes).padStart(2, '0');
-  document.getElementById('timer').innerText = `${mm}:00:00`; 
+  document.getElementById('timer').innerText = `${mm}:00:00`;
 
   inputField.blur();
 }
@@ -300,5 +346,60 @@ document.addEventListener('keydown', (e) => {
     case '5': startBreak(); break;
   }
 });
+
+
+
+// 🟡 บันทึกคะแนน
+let savedMatches = [];
+
+function saveMatchStatsManual() {
+  const date = new Date();
+  const day = date.toLocaleDateString('th-TH');
+  const time = date.toLocaleTimeString('th-TH');
+
+  const teamA = document.getElementById('teamAName').value || 'ทีม A';
+  const teamB = document.getElementById('teamBName').value || 'ทีม B';
+  const modeText = mode === 'up' ? 'นับขึ้น' : 'ถอยหลัง';
+  const duration = mode === 'up' ? Math.floor(totalElapsed / 1000) : Math.floor((countdownTarget - remainingCountdown) / 1000);
+
+  const data = { day, time, teamA, scoreA, teamB, scoreB, modeText, duration };
+  savedMatches.push(data);
+  renderSavedMatches();
+  showSavedPopup();
+}
+
+function renderSavedMatches() {
+  const container = document.getElementById('savedStatsList');
+  container.innerHTML = '';
+  savedMatches.forEach((match, index) => {
+    const div = document.createElement('div');
+    div.className = 'saved-item';
+    div.innerHTML = `
+      <strong>${match.teamA}</strong> ${match.scoreA} - ${match.scoreB} <strong>${match.teamB}</strong>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function showSavedPopup() {
+  const popup = document.getElementById('savedPopup');
+  popup.classList.add('visible');
+  setTimeout(() => popup.classList.remove('visible'), 3000);
+}
+
+function toggleSlidePanel() {
+  document.getElementById('savedSlidePanel').classList.toggle('open');
+}
+
+function toggleStatsPopup() {
+  const popup = document.getElementById('statsPopup');
+  popup.classList.toggle('open');
+}
+
+function clearSavedStats() {
+  savedMatches = [];
+  renderSavedMatches();
+}
+
 
 updateScores();
