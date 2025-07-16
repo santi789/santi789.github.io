@@ -33,48 +33,7 @@ function changeScore(team, change) {
   else scoreB = Math.max(0, scoreB + change);
 
 
-  // 🟡 บันทึกคะแนน
-  let savedMatches = [];
-
-  function saveMatchStatsManual() {
-    const date = new Date();
-    const day = date.toLocaleDateString('th-TH');
-    const time = date.toLocaleTimeString('th-TH');
-
-    const teamA = document.getElementById('teamAName').value || 'ทีม A';
-    const teamB = document.getElementById('teamBName').value || 'ทีม B';
-    const modeText = mode === 'up' ? 'นับขึ้น' : 'ถอยหลัง';
-    const duration = mode === 'up' ? Math.floor(totalElapsed / 1000) : Math.floor((countdownTarget - remainingCountdown) / 1000);
-
-    const data = { day, time, teamA, scoreA, teamB, scoreB, modeText, duration };
-    savedMatches.push(data);
-    renderSavedMatches();
-    showSavedPopup();
-  }
-
-  function renderSavedMatches() {
-    const container = document.getElementById('savedStatsList');
-    container.innerHTML = '';
-    savedMatches.forEach((match, index) => {
-      const div = document.createElement('div');
-      div.className = 'saved-item';
-      div.innerHTML = `
-      <strong>${match.teamA}</strong> ${match.scoreA} - ${match.scoreB} <strong>${match.teamB}</strong>
-      <br><small>${match.day} ${match.time} (${match.modeText})</small>
-    `;
-      container.appendChild(div);
-    });
-  }
-
-  function showSavedPopup() {
-    const popup = document.getElementById('savedPopup');
-    popup.classList.add('visible');
-    setTimeout(() => popup.classList.remove('visible'), 3000);
-  }
-
-  function toggleSlidePanel() {
-    document.getElementById('savedSlidePanel').classList.toggle('open');
-  }
+  
 
 
   updateScores();
@@ -228,6 +187,11 @@ function resetTimer() {
   inBreak = false;
   isPendingBreak = false;
 
+  // 🟡 รีเซตคะแนนทั้ง 2 ทีม
+  scoreA = 0;
+  scoreB = 0;
+  updateScores();
+
   totalElapsed = 0;
   lastSecondPlayed = null;
   hasPlayedBuzzer = false;
@@ -361,8 +325,9 @@ function saveMatchStatsManual() {
   const teamB = document.getElementById('teamBName').value || 'ทีม B';
   const modeText = mode === 'up' ? 'นับขึ้น' : 'ถอยหลัง';
   const duration = mode === 'up' ? Math.floor(totalElapsed / 1000) : Math.floor((countdownTarget - remainingCountdown) / 1000);
+  const half = document.getElementById('halfLabel').innerText; // 🟡 เพิ่มข้อมูลครึ่ง
 
-  const data = { day, time, teamA, scoreA, teamB, scoreB, modeText, duration };
+  const data = { day, time, teamA, scoreA, teamB, scoreB, modeText, duration, half };
   savedMatches.push(data);
   renderSavedMatches();
   showSavedPopup();
@@ -375,7 +340,13 @@ function renderSavedMatches() {
     const div = document.createElement('div');
     div.className = 'saved-item';
     div.innerHTML = `
-      <strong>${match.teamA}</strong> ${match.scoreA} - ${match.scoreB} <strong>${match.teamB}</strong>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <strong>${match.teamA}</strong> ${match.scoreA} - ${match.scoreB} <strong>${match.teamB}</strong>
+          <br><small style="color: #666; font-size: 14px;">${match.half || 'ครึ่งแรก / First Half'}</small>
+        </div>
+        <button onclick="deleteSavedMatch(${index})" style="background: #e53935; color: white; border: none; border-radius: 4px; padding: 5px 8px; cursor: pointer; font-size: 12px;">🗑️</button>
+      </div>
     `;
     container.appendChild(div);
   });
@@ -401,5 +372,11 @@ function clearSavedStats() {
   renderSavedMatches();
 }
 
+function deleteSavedMatch(index) {
+  if (confirm('คุณต้องการลบรายการนี้หรือไม่?')) {
+    savedMatches.splice(index, 1);
+    renderSavedMatches();
+  }
+}
 
 updateScores();
